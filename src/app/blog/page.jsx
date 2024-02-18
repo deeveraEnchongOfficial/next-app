@@ -5,17 +5,16 @@ import Link from "next/link";
 import useSWR from "swr";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const Blog = () => {
-  const { data: session } = useSession();
-  const router = useRouter();
+
+  if (typeof window !== 'undefined') {
+    // Access location object here
+  }
 
   const fetcher = (...args) => fetch(...args).then((res) => res.json());
   const { data, mutate, error, isLoading } = useSWR(`/api/posts`, fetcher);
-
-  if (!session) {
-    router?.push("/dashboard/login");
-  }
 
   // Check if session is loading
   if (isLoading) {
@@ -44,7 +43,7 @@ const Blog = () => {
           key={item.id}
         >
           <div className={styles.imageContainer}>
-            <img
+            <Image
               src={item?.img}
               alt=""
               width={400}

@@ -4,8 +4,14 @@ import styles from "./page.module.css";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
+import Image from "next/image";
 
 const BlogPost = ({ params }) => {
+
+  if (typeof window !== 'undefined') {
+    // Access location object here
+  }
+  
   const { data: session } = useSession(); // Use useSession hook here
   const router = useRouter();
 
@@ -52,7 +58,7 @@ const BlogPost = ({ params }) => {
             <h1 className={styles.title}>{data.title}</h1>
             <p className={styles.desc}>{data.desc}</p>
             <div className={styles.author}>
-              <img
+              <Image
                 src={data.img}
                 alt=""
                 width={40}
@@ -64,7 +70,7 @@ const BlogPost = ({ params }) => {
             </div>
           </div>
           <div className={styles.imageContainer}>
-            <img src={data.img} alt="" style={{ width: '100%', height: '100%' }} fill={true} className={styles.image} />
+            <Image src={data.img} alt="" style={{ width: '100%', height: '100%' }} fill={true} className={styles.image} />
           </div>
         </div>
       ) : (
