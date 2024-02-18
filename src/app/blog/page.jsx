@@ -1,31 +1,54 @@
+"use client";
 import React from "react";
 import styles from "./page.module.css";
 import Link from "next/link";
-import Image from "next/image";
+import useSWR from "swr";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+const Blog = () => {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const { data: session } = useSession();
+  const router = useRouter();
 
-async function getData() {
-  const res = await fetch(`${apiBaseUrl}/api/posts`, {
-    cache: "no-store",
-  });
+  //NEW WAY TO FETCH DATA
+  const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
+  const { data, mutate, error, isLoading } = useSWR(`/api/posts`, fetcher);
+
+  if (session == undefined) {
+    router?.push("/dashboard/login");
   }
 
-  return res.json();
-}
+  // Check if session is loading
+  if (isLoading) {
+    return (
+      <div className={styles.loadingWrapper}>
+        <div className={styles.loadingContainer}>
+          <div className={styles.wrapper}>
+            <div className={styles.circle}></div>
+            <div className={styles.circle}></div>
+            <div className={styles.circle}></div>
+            <div className={styles.shadow}></div>
+            <div className={styles.shadow}></div>
+            <div className={styles.shadow}></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-const Blog = async () => {
-  const data = await getData();
   return (
     <div className={styles.mainContainer}>
-      {data.map((item) => (
-        <Link href={`/blog/${item._id}`} className={styles.container} key={item.id}>
+      {data?.map((item) => (
+        <Link
+          href={`/blog/${item._id}`}
+          className={styles.container}
+          key={item.id}
+        >
           <div className={styles.imageContainer}>
-            <Image
-              src={item.img}
+            <img
+              src={item?.img}
               alt=""
               width={400}
               height={250}
