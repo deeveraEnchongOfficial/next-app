@@ -7,16 +7,13 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 const Blog = () => {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
   const { data: session } = useSession();
   const router = useRouter();
 
-  //NEW WAY TO FETCH DATA
   const fetcher = (...args) => fetch(...args).then((res) => res.json());
-
   const { data, mutate, error, isLoading } = useSWR(`/api/posts`, fetcher);
 
-  if (session == undefined) {
+  if (!session) {
     router?.push("/dashboard/login");
   }
 
@@ -52,6 +49,7 @@ const Blog = () => {
               alt=""
               width={400}
               height={250}
+              loading="lazy"
               className={styles.image}
             />
           </div>

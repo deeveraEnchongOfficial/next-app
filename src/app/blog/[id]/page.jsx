@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import styles from "./page.module.css";
-import { notFound, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
 
@@ -36,7 +36,6 @@ const BlogPost = ({ params }) => {
   if (!session) {
     // Redirect to login page if user is not authenticated
     router.push("/login");
-    return null;
   }
 
   if (error) {
@@ -58,6 +57,7 @@ const BlogPost = ({ params }) => {
                 alt=""
                 width={40}
                 height={40}
+                loading="lazy"
                 className={styles.avatar}
               />
               <span className={styles.username}>{data.username}</span>
